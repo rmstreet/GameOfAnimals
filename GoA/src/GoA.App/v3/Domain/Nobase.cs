@@ -2,26 +2,26 @@
 namespace GoA.App.v3.Domain
 {
     using System;
-    public abstract class Nobase
+    public abstract class BaseNode
     {
         public Guid Id { get; private set; }
-        public string Informacao { get; protected set; }
-        public Nobase RespostaPositiva { get; protected set; }
-        public Nobase RespostaNegativa { get; protected set; }
-        public Nobase()
+        public string Information { get; protected set; }
+        public BaseNode PositiveQuestion { get; protected set; }
+        public BaseNode NegativeQuestion { get; protected set; }
+        public BaseNode()
         {
             Id = Guid.NewGuid();
         }
 
-        public Nobase AtribuirRespostaPositiva(Nobase sim)
+        public BaseNode WithPositiveQuestion(BaseNode sim)
         {
-            RespostaPositiva = sim;
+            PositiveQuestion = sim;
             return this;
         }
 
-        public Nobase AtribuirRespostaNegativa(Nobase nao)
+        public BaseNode WithNegativeQuestion(BaseNode nao)
         {
-            RespostaNegativa = nao;
+            NegativeQuestion = nao;
             return this;
         }
         public override bool Equals(object obj)
@@ -29,7 +29,7 @@ namespace GoA.App.v3.Domain
             if(obj == null)
                 return false;
 
-            var no = (Nobase)obj;
+            var no = (BaseNode)obj;
             return this.Id.Equals(no.Id);
         }
     }

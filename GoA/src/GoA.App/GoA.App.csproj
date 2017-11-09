@@ -67,6 +67,22 @@
     <Compile Include="v2\frmInicio.Designer.cs">
       <DependentUpon>frmInicio.cs</DependentUpon>
     </Compile>
+    <Compile Include="v3\Domain\Animal.cs" />
+    <Compile Include="v3\Domain\Jogo.cs" />
+    <Compile Include="v3\Domain\Nobase.cs" />
+    <Compile Include="v3\Domain\NobaseExtension.cs" />
+    <Compile Include="v3\Domain\Pergunta.cs" />
+    <Compile Include="v3\frmInicio.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="v3\frmInicio.Designer.cs">
+      <DependentUpon>frmInicio.cs</DependentUpon>
+    </Compile>
+    <Compile Include="v3\Resources\MessageInfo.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MessageInfo.resx</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -81,6 +97,17 @@
     </EmbeddedResource>
     <EmbeddedResource Include="v2\frmInicio.resx">
       <DependentUpon>frmInicio.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="v3\frmInicio.pt-BR.resx">
+      <DependentUpon>frmInicio.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="v3\frmInicio.resx">
+      <DependentUpon>frmInicio.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="v3\Resources\MessageInfo.pt-BR.resx" />
+    <EmbeddedResource Include="v3\Resources\MessageInfo.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MessageInfo.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

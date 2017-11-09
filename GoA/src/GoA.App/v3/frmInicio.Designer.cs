@@ -28,39 +28,54 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmInicio));
             this.label1 = new System.Windows.Forms.Label();
             this.btnIniciar = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.cboLanguage = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.25F);
-            this.label1.Location = new System.Drawing.Point(69, 30);
+            resources.ApplyResources(this.label1, "label1");
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(136, 16);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Pense em um animal!";
             // 
             // btnIniciar
             // 
-            this.btnIniciar.Location = new System.Drawing.Point(100, 65);
+            resources.ApplyResources(this.btnIniciar, "btnIniciar");
             this.btnIniciar.Name = "btnIniciar";
-            this.btnIniciar.Size = new System.Drawing.Size(75, 23);
-            this.btnIniciar.TabIndex = 1;
-            this.btnIniciar.Text = "Ok";
             this.btnIniciar.UseVisualStyleBackColor = true;
             this.btnIniciar.Click += new System.EventHandler(this.btnIniciar_Click);
             // 
-            // frmInicial
+            // label2
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this.label2, "label2");
+            this.label2.Name = "label2";
+            // 
+            // cboLanguage
+            // 
+            resources.ApplyResources(this.cboLanguage, "cboLanguage");
+            this.cboLanguage.FormattingEnabled = true;
+            this.cboLanguage.Name = "cboLanguage";
+            this.cboLanguage.SelectedIndexChanged += new System.EventHandler(this.cboLanguage_SelectedIndexChanged);
+            // 
+            // label3
+            // 
+            resources.ApplyResources(this.label3, "label3");
+            this.label3.Name = "label3";
+            // 
+            // frmInicio
+            // 
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 118);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.cboLanguage);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.btnIniciar);
             this.Controls.Add(this.label1);
-            this.Name = "frmInicial";
-            this.Text = "frmInicial";
+            this.Name = "frmInicio";
+            this.Load += new System.EventHandler(this.frmInicio_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -70,5 +85,8 @@
 
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnIniciar;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ComboBox cboLanguage;
+        private System.Windows.Forms.Label label3;
     }
 }

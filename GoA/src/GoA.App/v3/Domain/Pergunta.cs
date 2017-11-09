@@ -1,11 +1,11 @@
 ﻿
 namespace GoA.App.v3.Domain
 {
-    public class Pergunta : Nobase
+    public class Question : BaseNode
     {
-        public Pergunta(string pergunta)
+        public Question(string pergunta)
         {
-            Informacao = pergunta;
+            Information = pergunta;
         }        
     }
 }

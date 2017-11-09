@@ -1,122 +1,132 @@
 ﻿
 namespace GoA.App.v3.Domain
 {
+    using GoA.App.v3.Resources;
     using System;
 
-    public class Jogo
+    public class Game
     {
-        private Nobase _noInicial;
+        private BaseNode _noInicial;
         private Config _config;
-        private Jogo() { Init(); }
+        private Game() { Init(); }
 
         private void Init()
         {
-            var perguntaTubarao = new Pergunta("vive na água");
-            var tubarao = new Animal("Tubarão");
-            var macaco = new Animal("Macaco");
+            var firstAnimalQuestion = new Question(MessageInfo.questionAnimal1);
+            var firstAnimal = new Animal(MessageInfo.animal1);
+            var secondAnimal = new Animal(MessageInfo.animal2);
 
-            perguntaTubarao.AtribuirRespostaPositiva(tubarao);
-            perguntaTubarao.AtribuirRespostaNegativa(macaco);
+            firstAnimalQuestion.WithPositiveQuestion(firstAnimal);
+            firstAnimalQuestion.WithNegativeQuestion(secondAnimal);
 
-            _noInicial = perguntaTubarao;
+            _noInicial = firstAnimalQuestion;
         }
 
-        public Jogo Configurar(Action<string, string> descobri,
-                               Func<string, string, string> perguntaInterativa,
-                               Func<string, string, bool> perguntaSimOuNao)
+        public Game Configure(Action<string, string> finding,
+                               Func<string, string, string> interactiveQuestion,
+                               Func<string, string, bool> yesOrNoQuestion)
         {
-            _config = Config.Configure(descobri, perguntaInterativa, perguntaSimOuNao);
+            _config = Config.Configure(finding, interactiveQuestion, yesOrNoQuestion);
             return this;
         }
 
-        private void Jogar(Nobase infoLast, Nobase infoCurrent)
+        private void Play(BaseNode infoLast, BaseNode infoCurrent)
         {
-            if (infoCurrent.GetType() == typeof(Animal))
+            infoCurrent.
+                When<Animal>(() => { ActionOfAnimal(infoLast, infoCurrent); }).
+                When<Question>(() => { ActionOfQuestion(infoLast, infoCurrent); });
+        }
+
+        private void ActionOfAnimal(BaseNode infoLast, BaseNode infoCurrent)
+        {
+            bool answer = _config.WhenYesOrNoQuestion(String.Format(MessageInfo.questionYesOrNoAnimal, infoCurrent.Information), MessageInfo.titleConfirm);
+            if (answer)
             {
-                bool resposta = _config.PerguntaSimOuNao(String.Format("O animal que você pensou é {0}?", infoCurrent.Informacao), "Confirm");
-                if (resposta)
-                {
-                    _config.Descobri("Acertei de novo!", "Confirm");
-                }
+                _config.WhenFinding(MessageInfo.messageWinner, MessageInfo.titleConfirm);
+            }
+            else
+            {
+                if (infoCurrent.NegativeQuestion != null)
+                    Play(infoCurrent, infoCurrent.NegativeQuestion);
                 else
                 {
-                    if (infoCurrent.RespostaNegativa != null)
-                        Jogar(infoCurrent, infoCurrent.RespostaNegativa);
-                    else
+                    string nameNewAnimal = _config.WhenInteractiveQuestion(MessageInfo.questionAnimalName, MessageInfo.titleDesist);
+                    string featureNewAnimal = _config.WhenInteractiveQuestion(string.Format(MessageInfo.completeAnimal, nameNewAnimal, infoCurrent.Information), MessageInfo.titleComplete);
+
+                    if (!string.IsNullOrEmpty(nameNewAnimal) && !string.IsNullOrEmpty(featureNewAnimal))
                     {
-                        string nomeAnimalNovo = _config.PerguntaInterativa("Qual animal você pensou?", "Desisto");
-                        string caracteristicaAnimalNovo = _config.PerguntaInterativa(string.Format("Um(a) {0} __________ mas um(a) {1} não.", nomeAnimalNovo, infoCurrent.Informacao), "Complete");
+                        var question = new Question(featureNewAnimal);
+                        var animal = new Animal(nameNewAnimal);
+                        question.WithPositiveQuestion(animal);
 
-                        if (!string.IsNullOrEmpty(nomeAnimalNovo) && !string.IsNullOrEmpty(caracteristicaAnimalNovo))
-                        {
-                            var pergunta = new Pergunta(caracteristicaAnimalNovo);
-                            var animal = new Animal(nomeAnimalNovo);
-                            pergunta.AtribuirRespostaPositiva(animal);
-
-                            pergunta.AtribuirRespostaNegativa(infoCurrent);
-                            if (infoCurrent.Equals(infoLast.RespostaPositiva))
-                                infoLast.AtribuirRespostaPositiva(pergunta);
-                            else if (infoCurrent.Equals(infoLast.RespostaNegativa))
-                                infoLast.AtribuirRespostaNegativa(pergunta);
-                        }
+                        question.WithNegativeQuestion(infoCurrent);
+                        if (infoCurrent.Equals(infoLast.PositiveQuestion))
+                            infoLast.WithPositiveQuestion(question);
+                        else if (infoCurrent.Equals(infoLast.NegativeQuestion))
+                            infoLast.WithNegativeQuestion(question);
                     }
                 }
             }
-            else if (infoCurrent.GetType() == typeof(Pergunta))
+        }
+        private void ActionOfQuestion(BaseNode infoLast, BaseNode infoCurrent)
+        {
+            bool answer = _config.WhenYesOrNoQuestion(String.Format(MessageInfo.questionYesOrNoAnimal, infoCurrent.Information), MessageInfo.titleConfirm);
+            if (answer)
             {
-                bool resposta = _config.PerguntaSimOuNao(String.Format("O animal que você pensou {0}?", infoCurrent.Informacao), "Confirm");
-                if (resposta)
-                {
-                    Jogar(infoCurrent, infoCurrent.RespostaPositiva);
-                }
-                else
-                {
-                    Jogar(infoCurrent, infoCurrent.RespostaNegativa);
-                }
+                Play(infoCurrent, infoCurrent.PositiveQuestion);
             }
+            else
+            {
+                Play(infoCurrent, infoCurrent.NegativeQuestion);
+            }
+        }
+        public void Start()
+        {
+            if (_config == null) throw new Exception("Game without configuration.");
 
+            Play(null, _noInicial);
         }
 
-        public void Iniciar()
+        public void Reset()
         {
-            Jogar(null, _noInicial);
+            Init();
         }
 
         #region Factory
-        public static Jogo NovoJogo()
+        public static Game NewGame()
         {
-            return new Jogo();
+            return new Game();
         }
         #endregion
 
         #region Configuração do jogo
         private class Config
         {
-            private Action<string, string> _descobri;
-            private Func<string, string, string> _perguntaInterativa;
-            private Func<string, string, bool> _perguntaSimOuNao;
+            private Action<string, string> _findind;
+            private Func<string, string, string> _interactiveQuestion;
+            private Func<string, string, bool> _yesOrNoQuestion;
 
-            internal void Descobri(string msg, string titulo)
+            internal void WhenFinding(string msg, string title)
             {
-                _descobri(msg, titulo);
+                _findind(msg, title);
             }
 
-            internal string PerguntaInterativa(string msg, string titulo)
+            internal string WhenInteractiveQuestion(string msg, string title)
             {
-                return _perguntaInterativa(msg, titulo);
+                return _interactiveQuestion(msg, title);
             }
 
-            internal bool PerguntaSimOuNao(string msg, string titulo)
+            internal bool WhenYesOrNoQuestion(string msg, string title)
             {
-                return _perguntaSimOuNao(msg, titulo);
+                return _yesOrNoQuestion(msg, title);
             }
 
             #region Factory
-            public static Config Configure(Action<string, string> descobri,
-                                           Func<string, string, string> perguntaInterativa,
-                                           Func<string, string, bool> perguntaSimOuNao)
+            public static Config Configure(Action<string, string> finding,
+                                           Func<string, string, string> interactiveQuestion,
+                                           Func<string, string, bool> yesOrNoQuestion)
             {
-                return new Config() { _descobri = descobri, _perguntaInterativa = perguntaInterativa, _perguntaSimOuNao = perguntaSimOuNao };
+                return new Config() { _findind = finding, _interactiveQuestion = interactiveQuestion, _yesOrNoQuestion = yesOrNoQuestion };
             }
             #endregion
 
