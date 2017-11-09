@@ -2,7 +2,7 @@
 
 Game of Animals Questions
 ______
-Current Version: v2
+Current Version: v3
 
 Having fun with simple code refactoring.
 
